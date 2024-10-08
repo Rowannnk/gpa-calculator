@@ -1,7 +1,6 @@
 import dbConnect from "@/lib/db";
 import Course from "@/models/Course";
 
-// PUT Request: Update a course by ID
 export async function PUT(req, { params }) {
   const { id } = params;
   await dbConnect();
@@ -18,27 +17,18 @@ export async function PUT(req, { params }) {
     if (!updatedCourse) {
       return new Response(JSON.stringify({ message: "Course not found" }), {
         status: 404,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store", // Disable cache
-        },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     return new Response(JSON.stringify(updatedCourse), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store", // Disable cache
-      },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     return new Response(JSON.stringify({ message: "Error updating course" }), {
       status: 500,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store", // Disable cache
-      },
+      headers: { "Content-Type": "application/json" },
     });
   }
 }
