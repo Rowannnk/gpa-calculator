@@ -9,16 +9,14 @@ export default function Home() {
   const [credits, setCredits] = useState(0);
   const [editId, setEditId] = useState(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
-
   const fetchCourses = async () => {
-    const res = await fetch(`${API_BASE}/courses/course`);
+    const res = await fetch("/api/courses/course");
     const data = await res.json();
     setCourses(data);
   };
   useEffect(() => {
     fetchCourses();
-  }, [API_BASE]);
+  }, []);
 
   const calculateGPA = () => {
     const gradePoints = {
@@ -44,7 +42,7 @@ export default function Home() {
     const newCourse = { name: courseName, grade, credits: Number(credits) };
 
     if (editId) {
-      await fetch(`${API_BASE}/courses/update/${editId}`, {
+      await fetch(`/api/courses/update/${editId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCourse),
@@ -56,7 +54,7 @@ export default function Home() {
         )
       );
     } else {
-      const res = await fetch(`${API_BASE}/courses/create`, {
+      const res = await fetch("/api/courses/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCourse),
@@ -73,7 +71,7 @@ export default function Home() {
   };
 
   const deleteCourse = async (id) => {
-    await fetch(`${API_BASE}/courses/delete/${id}`, { method: "DELETE" });
+    await fetch(`/api/courses/delete/${id}`, { method: "DELETE" });
     setCourses(courses.filter((course) => course._id !== id));
     fetchCourses();
   };
