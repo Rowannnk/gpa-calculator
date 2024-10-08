@@ -7,7 +7,6 @@ export async function POST(req) {
   const { name, grade, credits } = await req.json();
   console.log(name);
 
-  // Validate input
   if (!name || !grade || credits < 0) {
     return new Response(JSON.stringify({ message: "Invalid course data" }), {
       status: 400,

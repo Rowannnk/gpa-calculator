@@ -10,7 +10,7 @@ export default function Home() {
   const [editId, setEditId] = useState(null);
 
   const fetchCourses = async () => {
-    const res = await fetch("/api/courses/course");
+    const res = await fetch("/api/courses/course", { cache: "no-store" });
     const data = await res.json();
     setCourses(data);
   };
@@ -43,6 +43,7 @@ export default function Home() {
 
     if (editId) {
       await fetch(`/api/courses/update/${editId}`, {
+        cache: "no-store",
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCourse),
@@ -55,6 +56,8 @@ export default function Home() {
       );
     } else {
       const res = await fetch("/api/courses/create", {
+        cache: "no-store",
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCourse),
@@ -71,7 +74,10 @@ export default function Home() {
   };
 
   const deleteCourse = async (id) => {
-    await fetch(`/api/courses/delete/${id}`, { method: "DELETE" });
+    await fetch(`/api/courses/delete/${id}`, {
+      cache: "no-store",
+      method: "DELETE",
+    });
     setCourses(courses.filter((course) => course._id !== id));
     fetchCourses();
   };
