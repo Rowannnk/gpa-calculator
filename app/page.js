@@ -9,14 +9,12 @@ export default function Home() {
   const [credits, setCredits] = useState(0);
   const [editId, setEditId] = useState(null);
 
-  // Fetch courses
+  const fetchCourses = async () => {
+    const res = await fetch("/api/courses/course");
+    const data = await res.json();
+    setCourses(data);
+  };
   useEffect(() => {
-    const fetchCourses = async () => {
-      const res = await fetch("/api/courses/course");
-      const data = await res.json();
-      setCourses(data);
-    };
-
     fetchCourses();
   }, []);
 
@@ -65,7 +63,7 @@ export default function Home() {
       const data = await res.json();
       setCourses([...courses, data]);
     }
-
+    fetchCourses();
     setCourseName("");
     setGrade("");
     setCredits(0);
@@ -75,6 +73,7 @@ export default function Home() {
   const deleteCourse = async (id) => {
     await fetch(`/api/courses/delete/${id}`, { method: "DELETE" });
     setCourses(courses.filter((course) => course._id !== id));
+    fetchCourses();
   };
 
   const startEditCourse = (course) => {
@@ -82,6 +81,7 @@ export default function Home() {
     setGrade(course.grade);
     setCredits(course.credits);
     setEditId(course._id);
+    fetchCourses();
   };
 
   return (
