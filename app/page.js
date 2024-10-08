@@ -10,7 +10,7 @@ export default function Home() {
   const [editId, setEditId] = useState(null);
 
   const fetchCourses = async () => {
-    const res = await fetch("http://localhost:3000/api/courses/course");
+    const res = await fetch("/api/courses/course");
     const data = await res.json();
     setCourses(data);
   };
@@ -42,7 +42,7 @@ export default function Home() {
     const newCourse = { name: courseName, grade, credits: Number(credits) };
 
     if (editId) {
-      await fetch(`http://localhost:3000/api/courses/update/${editId}`, {
+      await fetch(`/api/courses/update/${editId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCourse),
@@ -54,7 +54,7 @@ export default function Home() {
         )
       );
     } else {
-      const res = await fetch("http://localhost:3000/api/courses/create", {
+      const res = await fetch("/api/courses/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCourse),
@@ -71,9 +71,7 @@ export default function Home() {
   };
 
   const deleteCourse = async (id) => {
-    await fetch(`http://localhost:3000/api/courses/delete/${id}`, {
-      method: "DELETE",
-    });
+    await fetch(`/api/courses/delete/${id}`, { method: "DELETE" });
     setCourses(courses.filter((course) => course._id !== id));
     fetchCourses();
   };
