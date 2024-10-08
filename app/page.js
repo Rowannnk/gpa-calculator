@@ -10,10 +10,13 @@ export default function Home() {
   const [editId, setEditId] = useState(null);
 
   const fetchCourses = async () => {
-    const res = await fetch("/api/courses/course");
+    const res = await fetch("/api/courses/course", {
+      headers: { "Cache-Control": "no-store" }, // Ensure fresh data
+    });
     const data = await res.json();
     setCourses(data);
   };
+
   useEffect(() => {
     fetchCourses();
   }, []);
