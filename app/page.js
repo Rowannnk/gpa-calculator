@@ -9,15 +9,14 @@ export default function Home() {
   const [credits, setCredits] = useState(0);
   const [editId, setEditId] = useState(null);
 
-  // Fetch courses function
-  const fetchCourses = async () => {
-    const res = await fetch("/api/courses/course");
-    const data = await res.json();
-    setCourses(data);
-  };
-
-  // Fetch courses on component mount
+  // Fetch courses
   useEffect(() => {
+    const fetchCourses = async () => {
+      const res = await fetch("/api/courses/course");
+      const data = await res.json();
+      setCourses(data);
+    };
+
     fetchCourses();
   }, []);
 
@@ -44,35 +43,29 @@ export default function Home() {
   const addOrUpdateCourse = async () => {
     const newCourse = { name: courseName, grade, credits: Number(credits) };
 
-    try {
-      let res;
-      if (editId) {
-        // Update existing course
-        res = await fetch(`/api/courses/update/${editId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newCourse),
-        });
-      } else {
-        // Add new course
-        res = await fetch("/api/courses/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newCourse),
-        });
-      }
+    if (editId) {
+      await fetch(`/api/courses/update/${editId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newCourse),
+      });
 
-      if (res.ok) {
-        // Refresh course list after add/update
-        fetchCourses();
-      } else {
-        console.error("Failed to save the course");
-      }
-    } catch (error) {
-      console.error("Error adding/updating course:", error);
+      setCourses(
+        courses.map((course) =>
+          course._id === editId ? { ...course, ...newCourse } : course
+        )
+      );
+    } else {
+      const res = await fetch("/api/courses/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newCourse),
+      });
+
+      const data = await res.json();
+      setCourses([...courses, data]);
     }
 
-    // Reset input fields
     setCourseName("");
     setGrade("");
     setCredits(0);
@@ -80,20 +73,8 @@ export default function Home() {
   };
 
   const deleteCourse = async (id) => {
-    try {
-      const response = await fetch(`/api/courses/delete/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        // Refresh course list after deletion
-        fetchCourses();
-      } else {
-        console.error("Failed to delete the course");
-      }
-    } catch (error) {
-      console.error("Error deleting course:", error);
-    }
+    await fetch(`/api/courses/delete/${id}`, { method: "DELETE" });
+    setCourses(courses.filter((course) => course._id !== id));
   };
 
   const startEditCourse = (course) => {
